@@ -1,4 +1,4 @@
-(ns allocations-clojure.core
+(ns allocations.core
   (:gen-class))
 
 (defn -main
