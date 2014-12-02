@@ -5,7 +5,7 @@
               :subprotocol "h2:file"
               :subname "db/allocations"})
 
-(defn add-location-to-db
+(defn create-location
   [x y]
   (let [results (sql/with-connection db-spec
                   (sql/insert-record :locations
@@ -13,7 +13,7 @@
     (assert (= (count results) 1))
     (first (vals results))))
 
-(defn get-xy
+(defn read-location
   [loc-id]
   (let [results (sql/with-connection db-spec
                   (sql/with-query-results res
@@ -22,7 +22,7 @@
     (assert (= (count results) 1))
     (first results)))
 
-(defn get-all-locations
+(defn read-locations
   []
   (let [results (sql/with-connection db-spec
                   (sql/with-query-results res
