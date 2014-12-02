@@ -11,7 +11,9 @@
   :main allocations.handler
   :min-lein-version "2.0.0"
   :plugins [[lein-ring "0.8.13"]]
-  :profiles {:dev {:dependencies [[javax.servlet/servlet-api "2.5"] [ring-mock "0.1.5"]]}}
+  :profiles {:dev {:dependencies [[javax.servlet/servlet-api "2.5"] [ring-mock "0.1.5"]]}
+             :production {:env {:production true}}}
   :ring {:handler allocations.handler/app}
+  :uberjar-name "allocations-standalone.jar"
   :url "http://www.carbonfive.com"
 )
