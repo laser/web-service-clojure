@@ -18,4 +18,4 @@ pom.xml.asc
 *.class
 /.lein-*
 /.nrepl-port
-*.trace.db
+*.db
