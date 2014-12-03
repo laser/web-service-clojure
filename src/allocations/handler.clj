@@ -10,15 +10,12 @@
   (:gen-class)))
 
 (cc/defroutes app-routes
-  (cc/GET "/locations" []
-          (http/ok (db/read-locations)))
-  (cc/GET "/locations/:id" [id]
-          (http/ok (db/read-location id)))
-  (cc/POST "/locations" [:as req]
-           (let [{:keys [x y]} (keywordize-keys (req :body))
-                 loc-id (db/create-location x y)
-                 loc-url (http/url-for req loc-id)]
-             (http/created loc-url)))
+  (cc/GET "/todos" []
+          (http/ok (db/read-todos)))
+  (cc/GET "/todos/:id" [id]
+          (http/ok (db/read-todo id)))
+  (cc/POST "/todos" [:as req]
+           (http/created (->> req :body keywordize-keys :text db/create-todo :id (http/url-for req))))
   (cc/ANY "*" []
           (http/not-found)))
 

@@ -5,27 +5,29 @@
               :subprotocol "h2:file"
               :subname "db/allocations"})
 
-(defn create-location
-  [x y]
+(defn create-todo
+  [text]
   (let [results (sql/with-connection db-spec
-                  (sql/insert-record :locations
-                                     {:x x :y y}))]
-    (assert (= (count results) 1))
-    (first (vals results))))
+                  (sql/insert-record :todos
+                                     {:text text}))]
 
-(defn read-location
-  [loc-id]
+    (-> results count (partial = 1) assert)
+    (->> results vals first (assoc {:text text} :id))))
+
+(defn read-todo
+  [todo-id]
   (let [results (sql/with-connection db-spec
                   (sql/with-query-results res
-                    ["select x, y from locations where id = ?" loc-id]
+                    ["select id, text from todos where id = ?" todo-id]
                     (doall res)))]
-    (assert (= (count results) 1))
+
+    (-> results count (partial = 1) assert)
     (first results)))
 
-(defn read-locations
+(defn read-todos
   []
   (let [results (sql/with-connection db-spec
                   (sql/with-query-results res
-                    ["select id, x, y from locations"]
+                    ["select id, text from todos"]
                     (doall res)))]
     results))
