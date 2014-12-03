@@ -11,18 +11,20 @@
                   (sql/insert-record :todos
                                      {:text text}))]
 
-    (-> results count (partial = 1) assert)
-    (->> results vals first (assoc {:text text} :id))))
+    (if (= 1 (count results))
+      {:status :success :result (->> results vals first (assoc {:text text} :id))}
+      {:status :failure :message (format "Error: Could not create todo with text %s" text)})))
 
 (defn read-todo
-  [todo-id]
+  [id]
   (let [results (sql/with-connection db-spec
                   (sql/with-query-results res
-                    ["select id, text from todos where id = ?" todo-id]
+                    ["select id, text from todos where id = ?" id]
                     (doall res)))]
 
-    (-> results count (partial = 1) assert)
-    (first results)))
+    (if (= 1 (count results))
+      {:status :success :result (first results)}
+      {:status :failure :message (format "Error: No todo found with id %s" id)})))
 
 (defn read-todos
   []
@@ -31,3 +33,11 @@
                     ["select id, text from todos"]
                     (doall res)))]
     results))
+
+(defn delete-todo
+  [id]
+  (let [deleted (sql/with-connection db-spec
+                  (sql/delete-rows :todos ["id = ?" id]))]
+    (if (= 0 (first deleted))
+      {:status :success :result nil}
+      {:status :failure :message (format "Error: No todo found with id %d" id)})))

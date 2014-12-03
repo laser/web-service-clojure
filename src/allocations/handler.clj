@@ -3,25 +3,39 @@
             [allocations.http :as http]
             [clojure.walk :refer [keywordize-keys]]
             [compojure.core :as cc]
-            [compojure.handler :as handler]
-            [compojure.route :as route]
+            [compojure.handler :as hdlr]
             [ring.adapter.jetty :as jetty]
             [ring.middleware.json :refer [wrap-json-response wrap-json-body]]
-  (:gen-class)))
+            (:gen-class)))
 
 (cc/defroutes app-routes
   (cc/GET "/todos" []
           (http/ok (db/read-todos)))
+
   (cc/GET "/todos/:id" [id]
-          (http/ok (db/read-todo id)))
+          (let [result (db/read-todo id)]
+            (case (:status result)
+              :failure (http/not-found)
+              :success (http/ok (:result result)))))
+
   (cc/POST "/todos" [:as req]
-           (http/created (->> req :body keywordize-keys :text db/create-todo :id (http/url-for req))))
+           (let [result (->> req :body keywordize-keys :text db/create-todo)]
+             (case (:status result)
+               :failure (http/internal-error)
+               :success (->> result :result :id (http/url-for req) http/created))))
+
+  (cc/DELETE "/todos/:id" [id]
+             (let [result (db/delete-todo id)]
+               (case (:status result)
+                 :failure (http/not-found)
+                 :success (http/no-content))))
+
   (cc/ANY "*" []
           (http/not-found)))
 
 (def app
   (-> app-routes
-      handler/site
+      hdlr/site
       wrap-json-body
       wrap-json-response))
 

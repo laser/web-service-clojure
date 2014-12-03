@@ -13,13 +13,19 @@
 
 (defn created
   "HTTP 201 Created"
-  ([url]
-   (created url nil))
+  ([url] (created url nil))
   ([url body]
    (->
      (response body)
      (status 201)
      (header "Location" url))))
+
+(defn no-content
+  "HTTP 204 No Content"
+  []
+  (->
+    (response nil)
+    (status 204)))
 
 (defn not-found
   "HTTP 404 Not Found"
@@ -31,6 +37,7 @@
 (defn- url-for-req
   "Get the fully-qualified URL of a Ring request"
   [{scheme :scheme server-name :server-name server-port :server-port uri :uri}]
+  (println "scheme-----" scheme)
   (str "http://" server-name ":" server-port uri))
 
 (defn url-for

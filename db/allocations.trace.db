@@ -1,0 +1,6 @@
+12-02 22:12:31 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Data conversion error converting "599923asd"; SQL statement:
+select id, text from todos where id = ? [22018-170]
+12-02 22:12:32 jdbc[2]: exception
+org.h2.jdbc.JdbcSQLException: Data conversion error converting "599923asd"; SQL statement:
+select id, text from todos where id = ? [22018-170]
