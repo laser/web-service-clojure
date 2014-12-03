@@ -3,7 +3,7 @@
 
 (def db-spec {:classname "org.h2.Driver"
               :subprotocol "h2:file"
-              :subname "db/allocations"})
+              :subname "db/allocations-dev"})
 
 (defn create-todo
   [text completed]
