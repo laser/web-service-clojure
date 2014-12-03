@@ -43,8 +43,11 @@
 (defn- url-for-req
   "Get the fully-qualified URL of a Ring request"
   [{scheme :scheme server-name :server-name server-port :server-port uri :uri}]
-  (println "scheme-----" scheme)
-  (str "http://" server-name ":" server-port uri))
+  (->
+    scheme
+    str
+    (subs 1)
+    (str "://" server-name ":" server-port uri)))
 
 (defn url-for
   "Create an URL given a Ring request + things to add to the path"
