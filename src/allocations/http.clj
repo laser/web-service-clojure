@@ -1,8 +1,7 @@
 (ns allocations.http
   (:require
             [clojure.string :refer [join]]
-            [ring.mock.request :refer [header]]
-            [ring.util.response :refer [response status]]))
+            [ring.util.response :refer [response status header]]))
 
 (defn ok
   "HTTP 200 OK"
