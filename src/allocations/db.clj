@@ -38,6 +38,14 @@
   [id]
   (let [deleted (sql/with-connection db-spec
                   (sql/delete-rows :todos ["id = ?" id]))]
-    (if (= 0 (first deleted))
+    (if (= 1 (first deleted))
       {:status :success :result nil}
-      {:status :failure :message (format "Error: No todo found with id %d" id)})))
+      {:status :failure :message (format "Error: Could not delete todo with id %d" id)})))
+
+(defn update-todo
+  [id text]
+  (let [updated (sql/with-connection db-spec
+                  (sql/update-values :todos ["id = ?" id] {:text text}))]
+    (if (= 1 (first updated))
+      {:status :success :result {:text text :id id}}
+      {:status :failure :message (format "Error: Could not update todo with id %d" id)})))

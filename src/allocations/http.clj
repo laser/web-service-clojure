@@ -34,6 +34,13 @@
     (response nil)
     (status 404)))
 
+(defn internal-error
+  "HTTP 500 Internal Error"
+  []
+  (->
+    (response nil)
+    (status 500)))
+
 (defn- url-for-req
   "Get the fully-qualified URL of a Ring request"
   [{scheme :scheme server-name :server-name server-port :server-port uri :uri}]
