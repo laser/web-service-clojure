@@ -6,20 +6,20 @@
               :subname "db/allocations"})
 
 (defn create-todo
-  [text]
-  (let [results (sql/with-connection db-spec
-                  (sql/insert-record :todos
-                                     {:text text}))]
+  [text completed]
+  (let [to-create {:text text :completed completed}
+        results (sql/with-connection db-spec
+                  (sql/insert-record :todos to-create))]
 
     (if (= 1 (count results))
-      {:status :success :result (->> results vals first (assoc {:text text} :id))}
+      {:status :success :result (->> results vals first (assoc to-create :id))}
       {:status :failure :message (format "Error: Could not create todo with text %s" text)})))
 
 (defn read-todo
   [id]
   (let [results (sql/with-connection db-spec
                   (sql/with-query-results res
-                    ["select id, text from todos where id = ?" id]
+                    ["select id, text, completed from todos where id = ?" id]
                     (doall res)))]
 
     (if (= 1 (count results))
@@ -28,11 +28,10 @@
 
 (defn read-todos
   []
-  (let [results (sql/with-connection db-spec
-                  (sql/with-query-results res
-                    ["select id, text from todos"]
-                    (doall res)))]
-    results))
+  (sql/with-connection db-spec
+    (sql/with-query-results res
+      ["select id, text, completed from todos"]
+      (doall res))))
 
 (defn delete-todo
   [id]
@@ -43,9 +42,10 @@
       {:status :failure :message (format "Error: Could not delete todo with id %d" id)})))
 
 (defn update-todo
-  [id text]
-  (let [updated (sql/with-connection db-spec
-                  (sql/update-values :todos ["id = ?" id] {:text text}))]
+  [id text completed]
+  (let [to-update {:id id :text text :completed completed}
+        updated (sql/with-connection db-spec
+                  (sql/update-values :todos ["id = ?" id] to-update))]
     (if (= 1 (first updated))
-      {:status :success :result {:text text :id id}}
+      {:status :success :result to-update}
       {:status :failure :message (format "Error: Could not update todo with id %d" id)})))

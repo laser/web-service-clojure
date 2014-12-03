@@ -17,7 +17,8 @@
               :failure (http/not-found)
               :success (http/ok (:result result)))))
   (cc/POST "/todos" [:as req]
-           (let [result (->> req :body keywordize-keys :text db/create-todo)]
+           (let [{:keys [text completed]} (keywordize-keys (req :body))
+                 result (db/create-todo text completed)]
              (case (:status result)
                :failure (http/internal-error)
                :success (->> result :result :id (http/url-for req) http/created))))
@@ -27,7 +28,8 @@
                  :failure (http/not-found)
                  :success (http/no-content))))
   (cc/PATCH "/todos/:id" {body :body params :params}
-            (let [result (->> body keywordize-keys :text (db/update-todo (params :id)))]
+           (let [{:keys [text completed]} (keywordize-keys body)
+                 result (db/update-todo (:id params) text completed)]
               (case (:status result)
                 :failure (http/not-found)
                 :success (->> result :result http/ok))))
