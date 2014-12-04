@@ -1,10 +1,10 @@
-(ns allocations.db
+(ns tutorial.db
   (:require [oj.core :as oj]
             [oj.modifiers :as db]))
 
 (def db-spec {:classname "org.h2.Driver"
               :subprotocol "h2:file"
-              :subname "db/allocations-dev"})
+              :subname "db/tutorial-dev"})
 
 (defn create-todo
   [text completed]

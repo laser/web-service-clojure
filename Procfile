@@ -1,1 +1,1 @@
-web: java $JVM_OPTS -cp target/allocations-standalone.jar clojure.main -m allocations.handler
+web: java $JVM_OPTS -cp target/tutorial-standalone.jar clojure.main -m tutorial.handler

@@ -1,6 +1,6 @@
-(ns allocations.handler
-  (:require [allocations.db :as db]
-            [allocations.http :as http]
+(ns tutorial.handler
+  (:require [tutorial.db :as db]
+            [tutorial.http :as http]
             [clojure.walk :refer [keywordize-keys]]
             [compojure.core :as cc]
             [compojure.handler :as hdlr]

@@ -1,4 +1,4 @@
-(ns allocations.http
+(ns tutorial.http
   (:require
             [clojure.string :refer [join]]
             [ring.util.response :refer [response status header]]))

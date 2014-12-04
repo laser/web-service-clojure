@@ -1,3 +1,3 @@
-# Introduction to allocations-clojure
+# A Simple Web Service
 
-TODO: write [great documentation](http://jacobian.org/writing/what-to-write/)
+A step-by-step guide to building a simple web service, in Clojure.

@@ -1,6 +1,6 @@
-(ns allocations-clojure.core-test
+(ns tutorial-clojure.core-test
   (:require [clojure.test :refer :all]
-            [allocations-clojure.core :refer :all]))
+            [tutorial-clojure.core :refer :all]))
 
 (deftest a-test
   (testing "FIXME, I fail."
