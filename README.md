@@ -1,4 +1,4 @@
-# allocations-clojure
+# web-service-clojure
 
 Build a simple RESTful API in Clojure.
 
