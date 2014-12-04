@@ -1,5 +1,6 @@
 (ns allocations.db
-  (:require [clojure.java.jdbc :as sql]))
+  (:require [oj.core :as oj]
+            [oj.modifiers :as db]))
 
 (def db-spec {:classname "org.h2.Driver"
               :subprotocol "h2:file"
@@ -7,20 +8,21 @@
 
 (defn create-todo
   [text completed]
-  (let [to-create {:text text :completed completed}
-        results (sql/with-connection db-spec
-                  (sql/insert-record :todos to-create))]
+  (let [user-data {:text text :completed completed}
+        results (-> (db/query :todos)
+                    (db/insert user-data)
+                    (oj/exec db-spec))]
 
     (if (= 1 (count results))
-      {:status :success :result (->> results vals first (assoc to-create :id))}
+      {:status :success :result (->> results vals first (assoc user-data :id))}
       {:status :failure :message (format "Error: Could not create todo with text %s" text)})))
 
 (defn read-todo
   [id]
-  (let [results (sql/with-connection db-spec
-                  (sql/with-query-results res
-                    ["select id, text, completed from todos where id = ?" id]
-                    (doall res)))]
+  (let [results (-> (db/query :todos)
+                    (db/select [:id :text :completed])
+                    (db/where {:id id})
+                    (oj/exec db-spec))]
 
     (if (= 1 (count results))
       {:status :success :result (first results)}
@@ -28,24 +30,27 @@
 
 (defn read-todos
   []
-  (sql/with-connection db-spec
-    (sql/with-query-results res
-      ["select id, text, completed from todos"]
-      (doall res))))
+  (-> (db/query :todos)
+      (db/select [:id :text :completed])
+      (oj/exec db-spec)))
 
 (defn delete-todo
   [id]
-  (let [deleted (sql/with-connection db-spec
-                  (sql/delete-rows :todos ["id = ?" id]))]
+  (let [deleted (-> {:table :todos :delete true :where {:id id}}
+                    (oj/exec db-spec))]
+
     (if (= 1 (first deleted))
       {:status :success :result nil}
-      {:status :failure :message (format "Error: Could not delete todo with id %d" id)})))
+      {:status :failure :message (format "Error: Could not delete todo with id %s" id)})))
 
 (defn update-todo
   [id text completed]
-  (let [to-update {:id id :text text :completed completed}
-        updated (sql/with-connection db-spec
-                  (sql/update-values :todos ["id = ?" id] to-update))]
+  (let [user-data {:id id :text text :completed completed}
+        updated (-> (db/query :todos)
+                    (db/where {:id id})
+                    (db/update user-data)
+                    (oj/exec db-spec))]
+
     (if (= 1 (first updated))
-      {:status :success :result to-update}
+      {:status :success :result user-data}
       {:status :failure :message (format "Error: Could not update todo with id %d" id)})))
