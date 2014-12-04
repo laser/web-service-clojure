@@ -1,22 +1,21 @@
 (defproject allocations "0.1.0-SNAPSHOT"
   :dependencies [[com.h2database/h2 "1.3.170"]
-                 [compojure "1.2.0"]
-                 [oj "0.2.1"]
+                 [compojure "1.2.2"]
+                 [oj "0.2.1" :exclusions [commons-codec]]
                  [org.clojure/clojure "1.6.0"]
                  [ring/ring-defaults "0.1.2"]
                  [ring/ring-jetty-adapter "1.3.2"]
                  [ring/ring-json "0.3.1"]]
   :description "C5 Resource Allocations"
-  :joplin {
-           :migrators {:sql-mig "db/migrations"}
+  :joplin {:migrators {:sql-mig "db/migrations"}
            :seeds {:sql-seed "seeds.sql/run"}
-           :databases {:sql-dev {:type :sql, :url "jdbc:h2:file:db/allocations-dev"} }
-           :environments {:dev [{:db :sql-dev, :migrator :sql-mig, :seed :sql-seed}] }
-           }
+           :databases {:sql-dev {:type :sql, :url "jdbc:h2:file:db/allocations-dev"}}
+           :environments {:dev [{:db :sql-dev, :migrator :sql-mig, :seed :sql-seed}]}}
   :license {:name "MIT" :url "http://opensource.org/licenses/MIT"}
   :main allocations.handler
   :min-lein-version "2.0.0"
-  :plugins [[lein-ring "0.8.13"] [joplin.lein "0.2.2"]]
+  :plugins [[lein-ring "0.8.13" :exclusions [org.clojure/clojure]]
+            [joplin.lein "0.2.2" :exclusions [org.clojure/clojure]]]
   :profiles {:dev {:dependencies [[javax.servlet/servlet-api "2.5"] [ring-mock "0.1.5"]]}
              :production {:env {:production true}}}
   :ring {:handler allocations.handler/app}
