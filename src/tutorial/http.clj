@@ -12,8 +12,7 @@
 
 (defn created
   "HTTP 201 Created"
-  ([url] (created url nil))
-  ([url body]
+  ([body url]
    (->
      (response body)
      (status 201)
