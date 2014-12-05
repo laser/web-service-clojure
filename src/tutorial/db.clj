@@ -1,10 +1,10 @@
 (ns tutorial.db
   (:require [oj.core :as oj]
-            [oj.modifiers :as db]))
+            [oj.modifiers :as db]
+            [environ.core :refer [env]]))
 
-(def db-spec {:classname "org.h2.Driver"
-              :subprotocol "h2:file"
-              :subname "db/tutorial-dev"})
+(def db-spec
+  {:connection-uri (env :database-url)})
 
 (defn create-todo
   [text completed]
@@ -30,6 +30,7 @@
 
 (defn read-todos
   []
+  (println db-spec)
   (-> (db/query :todos)
       (db/select [:id :text :completed])
       (oj/exec db-spec)))
