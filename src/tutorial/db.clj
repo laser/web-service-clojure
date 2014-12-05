@@ -45,10 +45,10 @@
 
 (defn update-todo
   [id text completed]
-  (let [user-data {:id id :text text :completed completed}
+  (let [user-data {:id (read-string id) :text text :completed completed}
         updated (-> (db/query :todos)
                     (db/where {:id id})
-                    (db/update user-data)
+                    (db/update (update-in user-data [:completed] str))
                     (oj/exec db-spec))]
 
     (if (= 1 (first updated))
