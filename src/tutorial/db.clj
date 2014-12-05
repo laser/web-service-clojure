@@ -10,11 +10,11 @@
   [text completed]
   (let [user-data {:text text :completed completed}
         results (-> (db/query :todos)
-                    (db/insert user-data)
+                    (db/insert (update-in user-data [:completed] str))
                     (oj/exec db-spec))]
 
     (if (= 1 (count results))
-      {:status :success :result (->> results vals first (assoc user-data :id))}
+      {:status :success :result (->> results first vals first (assoc user-data :id))}
       {:status :failure :message (format "Error: Could not create todo with text %s" text)})))
 
 (defn read-todo
