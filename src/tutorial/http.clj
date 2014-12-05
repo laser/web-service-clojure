@@ -31,8 +31,7 @@
   []
   (->
     (response nil)
-    (status 404)
-    (header "Content-Type" "application/json")))
+    (status 404)))
 
 (defn internal-error
   "HTTP 500 Internal Error"
