@@ -21,7 +21,7 @@
                  result (db/create-todo text completed)]
              (case (:status result)
                :failure (http/internal-error)
-               :success (->> result :result :id (http/url-for req) http/created))))
+               :success (->> result :result :id (http/url-for req) (http/created (:result result))))))
   (cc/DELETE "/todos/:id" [id]
              (let [result (db/delete-todo id)]
                (case (:status result)
