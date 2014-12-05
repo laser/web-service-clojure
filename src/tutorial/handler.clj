@@ -28,8 +28,8 @@
                  :failure (http/not-found)
                  :success (http/no-content))))
   (cc/PATCH "/todos/:id" {body :body params :params}
-           (let [{:keys [text completed]} (keywordize-keys body)
-                 result (db/update-todo (:id params) text completed)]
+            (let [{:keys [text completed]} (keywordize-keys body)
+                  result (db/update-todo (:id params) text completed)]
               (case (:status result)
                 :failure (http/not-found)
                 :success (->> result :result http/ok))))
