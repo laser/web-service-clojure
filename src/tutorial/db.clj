@@ -30,7 +30,6 @@
 
 (defn read-todos
   []
-  (println db-spec)
   (-> (db/query :todos)
       (db/select [:id :text :completed])
       (oj/exec db-spec)))
