@@ -41,11 +41,3 @@
       hdlr/site
       wrap-json-body
       wrap-json-response))
-
-(defn -main
-  [& [port]]
-  (let [port (Integer. (or port
-                           (System/getenv "PORT")
-                           5000))]
-    (jetty/run-jetty #'app {:port port
-                            :join? false})))
