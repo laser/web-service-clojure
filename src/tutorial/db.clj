@@ -30,9 +30,10 @@
 
 (defn read-todos
   []
-  (-> (db/query :todos)
-      (db/select [:id :text :completed])
-      (oj/exec db-spec)))
+  (println (oj/exec (db/select (db/query :todos) [:id :text :completed]) db-spec))
+  {:status :success :result (-> (db/query :todos)
+                                (db/select [:id :text :completed])
+                                (oj/exec db-spec))})
 
 (defn delete-todo
   [id]

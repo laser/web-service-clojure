@@ -3,25 +3,31 @@
             [tutorial.http :as http]
             [clojure.walk :refer [keywordize-keys]]
             [compojure.core :as cc]
-            [compojure.handler :as hdlr]
             [ring.adapter.jetty :as jetty]
             [ring.middleware.json :refer [wrap-json-response wrap-json-body]]
             (:gen-class)))
 
 (cc/defroutes app-routes
   (cc/GET "/todos" []
-          (http/ok (db/read-todos)))
+          (let [work (db/read-todos)]
+            (case (:status work)
+              :failure (http/internal-error)
+              :success (http/ok (:result work)))))
   (cc/GET "/todos/:id" [id]
-          (let [result (db/read-todo id)]
-            (case (:status result)
+          (let [work (db/read-todo id)]
+            (case (:status work)
               :failure (http/not-found)
-              :success (http/ok (:result result)))))
+              :success (http/ok (:result work)))))
   (cc/POST "/todos" [:as req]
-           (let [{:keys [text completed]} (keywordize-keys (req :body))
-                 result (db/create-todo text completed)]
-             (case (:status result)
+           (let [b #(get-in req [:body %])
+                 work (db/create-todo (b :text) (b :completed))]
+             (case (:status work)
                :failure (http/internal-error)
-               :success (->> result :result :id (http/url-for req) (http/created (:result result))))))
+               :success (->> work
+                             :result
+                             :id
+                             (http/url-for req)
+                             (http/created (:result work))))))
   (cc/DELETE "/todos/:id" [id]
              (let [result (db/delete-todo id)]
                (case (:status result)
@@ -38,6 +44,5 @@
 
 (def app
   (-> app-routes
-      hdlr/site
-      wrap-json-body
+      (wrap-json-body {:keywords? true})
       wrap-json-response))
