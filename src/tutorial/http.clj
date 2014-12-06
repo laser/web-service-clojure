@@ -6,9 +6,7 @@
 (defn ok
   "HTTP 200 OK"
   [body]
-  (->
-    (response body)
-    (status 200)))
+  (status (response body) 200))
 
 (defn created
   "HTTP 201 Created"
@@ -21,23 +19,17 @@
 (defn no-content
   "HTTP 204 No Content"
   []
-  (->
-    (response nil)
-    (status 204)))
+  (status (response nil) 204))
 
 (defn not-found
   "HTTP 404 Not Found"
   []
-  (->
-    (response nil)
-    (status 404)))
+  (status (response nil) 404))
 
 (defn internal-error
   "HTTP 500 Internal Error"
   []
-  (->
-    (response nil)
-    (status 500)))
+  (status (response nil) 500))
 
 (defn- url-for-req
   "Get the fully-qualified URL of a Ring request"

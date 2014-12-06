@@ -36,12 +36,9 @@
 
 (defn delete-todo
   [id]
-  (let [deleted (-> {:table :todos :delete true :where {:id id}}
-                    (oj/exec db-spec))]
-
-    (if (= 1 (first deleted))
-      {:status :success :result nil}
-      {:status :failure :message (format "Error: Could not delete todo with id %s" id)})))
+  (if (= 1 (first (oj/exec {:table :todos :delete true :where {:id id}} db-spec)))
+    {:status :success :result nil}
+    {:status :failure :message (format "Error: Could not delete todo with id %s" id)}))
 
 (defn update-todo
   [id text completed]
