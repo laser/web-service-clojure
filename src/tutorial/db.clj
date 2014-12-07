@@ -50,4 +50,4 @@
 
     (if (= 1 (first updated))
       {:status :success :result user-data}
-      {:status :failure :message (format "Error: Could not update todo with id %d" id)})))
+      {:status :failure :message (format "Error: Could not update todo with id %s" id)})))
