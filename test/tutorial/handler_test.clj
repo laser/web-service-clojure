@@ -7,9 +7,6 @@
             [ragtime.core :refer [migrate-all connection]]
             [ragtime.sql.files :refer [migrations]]))
 
-(def db-spec
-  {:connection-uri (env :database-url)})
-
 (defn with-test-db
   [f]
   (migrate-all (connection (env :database-url))  (migrations))
