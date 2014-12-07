@@ -9,7 +9,7 @@
 
 (defn with-test-db
   [f]
-  (migrate-all (connection (env :database-url))  (migrations))
+  (migrate-all (connection (str "jdbc:" (env :database-url))) (migrations))
   (f))
 
 (use-fixtures :each with-test-db)

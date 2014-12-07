@@ -49,11 +49,13 @@
       (wrap-json-body {:keywords? true})
       wrap-json-response))
 
-(defn start [port]
+(defn start
+  [port]
   (jetty/run-jetty app {:port port
                         :join? false}))
 
-(defn -main []
-  (migrate-all (connection (env :database-url)) (migrations))
+(defn -main
+  []
+  (migrate-all (connection (str "jdbc:" (env :database-url))) (migrations))
   (let [port (Integer. (or (System/getenv "PORT") "3000"))]
     (start port)))

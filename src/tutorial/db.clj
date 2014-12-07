@@ -4,7 +4,7 @@
             [environ.core :refer [env]]))
 
 (def db-spec
-  {:connection-uri (env :database-url)})
+  {:connection-uri (str "jdbc:" (env :database-url))})
 
 (defn create-todo
   [text completed]
