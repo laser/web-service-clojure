@@ -4,7 +4,7 @@
                  [environ "1.0.0"]
                  [oj "0.2.1" :exclusions [commons-codec]]
                  [org.clojure/clojure "1.6.0"]
-                 [ragtime/ragtime.sql.files "0.3.7"]
+                 [ragtime/ragtime.sql.files "0.3.8"]
                  [ring/ring-defaults "0.1.2"]
                  [ring/ring-jetty-adapter "1.3.2"]
                  [ring/ring-json "0.3.1"]]
@@ -15,12 +15,12 @@
 
   :min-lein-version "2.0.0"
 
-  :plugins [[ragtime/ragtime.lein "0.3.7"]
+  :plugins [[ragtime/ragtime.lein "0.3.8"]
             [lein-ring "0.8.13" :exclusions [org.clojure/clojure]]
             [lein-environ "1.0.0"]]
 
   :profiles {
-             :shared {:ragtime {:migrations ragtime/ragtime.lein}}
+             :shared {:ragtime {:migrations ragtime.sql.files/migrations}}
              :production [:shared {:database ~(get (System/getenv) "DATABASE_URL")}]
              :dev [:shared {:env {:database-url "jdbc:h2:file:db/tutorial"}
                             :ragtime {:database "jdbc:h2:file:db/tutorial"}}]
