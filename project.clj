@@ -1,6 +1,5 @@
 (defproject tutorial "0.1.0-SNAPSHOT"
-  :dependencies [[com.h2database/h2 "1.3.170"]
-                 [compojure "1.2.2"]
+  :dependencies [[compojure "1.2.2"]
                  [environ "1.0.0"]
                  [oj "0.2.1" :exclusions [commons-codec]]
                  [org.clojure/clojure "1.6.0"]
@@ -21,13 +20,15 @@
 
   :profiles {
              :shared {:ragtime {:migrations ragtime.sql.files/migrations}}
-             :production [:shared {:database ~(get (System/getenv) "DATABASE_URL")}]
-             :dev [:shared {:env {:database-url "jdbc:h2:file:db/tutorial"}
-                            :ragtime {:database "jdbc:h2:file:db/tutorial"}}]
-             :test [:shared {:env {:database-url "jdbc:h2:mem:tutorial;DB_CLOSE_DELAY=-1"}
-                            :dependencies [[ring-mock "0.1.5"]
-                                           [org.clojure/data.json "0.2.5"]]
-                            :ragtime {:database "jdbc:h2:file:db/tutorial"}}]}
+             :prod [:shared {:database ~(get (System/getenv) "DATABASE_URL")}]
+             :dev [:shared {:dependencies [[mysql/mysql-connector-java "5.1.6"]]
+                            :env {:database-url "jdbc:mysql://127.0.0.1/tutorial_dev?user=root"}
+                            :ragtime {:database "jdbc:mysql://127.0.0.1/tutorial_dev?user=root"}}]
+             :test [:shared {:dependencies [[ring-mock "0.1.5"]
+                                            [org.clojure/data.json "0.2.5"]
+                                            [com.h2database/h2 "1.3.170"]]
+                             :env {:database-url "jdbc:h2:mem:tutorial_test;DB_CLOSE_DELAY=-1"}
+                             :ragtime {:database "jdbc:h2:mem:tutorial_test;DB_CLOSE_DELAY=-1"}}]}
 
   :ring {:handler tutorial.handler/app}
 
