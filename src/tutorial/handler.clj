@@ -1,11 +1,13 @@
 (ns tutorial.handler
-  (:require [tutorial.db :as db]
-            [tutorial.http :as http]
-            [clojure.walk :refer [keywordize-keys]]
-            [compojure.core :as cc]
+  (:require [compojure.core :as cc]
+            [environ.core :refer [env]]
+            [ragtime.core :refer [migrate-all connection]]
+            [ragtime.sql.files :refer [migrations]]
             [ring.adapter.jetty :as jetty]
             [ring.middleware.json :refer [wrap-json-response wrap-json-body]]
-            (:gen-class)))
+            [tutorial.db :as db]
+            [tutorial.http :as http])
+  (:gen-class))
 
 (cc/defroutes app-routes
   (cc/GET "/todos" []
@@ -34,7 +36,7 @@
                  :failure (http/not-found)
                  :success (http/no-content))))
   (cc/PATCH "/todos/:id" {body :body params :params}
-            (let [{:keys [text completed]} (keywordize-keys body)
+            (let [{:keys [text completed]} body
                   result (db/update-todo (:id params) text completed)]
               (case (:status result)
                 :failure (http/not-found)
@@ -46,3 +48,12 @@
   (-> app-routes
       (wrap-json-body {:keywords? true})
       wrap-json-response))
+
+(defn start [port]
+  (jetty/run-jetty app {:port port
+                        :join? false}))
+
+(defn -main []
+  (migrate-all (connection (env :database-url)) (migrations))
+  (let [port (Integer. (or (System/getenv "PORT") "3000"))]
+    (start port)))
