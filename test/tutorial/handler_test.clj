@@ -2,19 +2,17 @@
   (:require [clojure.test :refer :all]
             [tutorial.handler :refer :all]
             [ring.mock.request :refer [request content-type]]
-            [clojure.data.json :as json]
-            [ring.util.io :as io]
+            [clojure.data.json :refer [write-str read-str]]
             [environ.core :refer [env]]
-            [joplin.core :as joplin]
-            [joplin.jdbc.database]))
+            [ragtime.core :refer [migrate-all connection]]
+            [ragtime.sql.files :refer [migrations]]))
 
 (def db-spec
   {:connection-uri (env :database-url)})
 
 (defn with-test-db
   [f]
-  (joplin/reset-db {:db {:type :sql :url (env :database-url)}
-                    :migrator "db/migrations"})
+  (migrate-all (connection (env :database-url))  (migrations))
   (f))
 
 (use-fixtures :each with-test-db)
@@ -35,14 +33,14 @@
   [& args]
   (app (content-type (apply request args) "application/json")))
 
-(def api-post #(api-req :post %1 (json/write-str %2)))
-(def api-patch #(api-req :patch %1 (json/write-str %2)))
+(def api-post #(api-req :post %1 (write-str %2)))
+(def api-patch #(api-req :patch %1 (write-str %2)))
 (def api-get (partial api-req :get))
 (def api-delete (partial api-req :delete))
 
 (defn parse-resp
   [resp]
-  (update-in resp [:body] #(if % (json/read-str %) nil)))
+  (update-in resp [:body] #(if % (read-str %) nil)))
 
 (deftest handler-lifecycle
   ;;; missing route
