@@ -1,1 +1,1 @@
-web: java $JVM_OPTS -cp target/tutorial-standalone.jar clojure.main -m tutorial.handler
+web: lein with-profile production trampoline run -m tutorial.handler
