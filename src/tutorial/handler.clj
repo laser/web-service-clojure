@@ -1,6 +1,8 @@
 (ns tutorial.handler
   (:require [compojure.core :as cc]
             [environ.core :refer [env]]
+            [ragtime.core :refer [migrate-all connection]]
+            [ragtime.sql.files :refer [migrations]]
             [ring.adapter.jetty :as jetty]
             [ring.middleware.json :refer [wrap-json-response wrap-json-body]]
             [tutorial.db :as db]
@@ -37,5 +39,6 @@
 
 (defn -main
   []
+  (migrate-all (connection (str "jdbc:" (env :database-url))) (migrations))
   (let [port (Integer. (or (System/getenv "PORT") "3000"))]
     (start port)))

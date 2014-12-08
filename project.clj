@@ -14,23 +14,18 @@
 
   :min-lein-version "2.0.0"
 
-  :plugins [[ragtime/ragtime.lein "0.3.8"]
-            [lein-ring "0.8.13" :exclusions [org.clojure/clojure]]
+  :plugins [[lein-ring "0.8.13" :exclusions [org.clojure/clojure]]
             [lein-environ "1.0.0"]]
 
   :profiles {
              :shared {:ragtime {:migrations ragtime.sql.files/migrations}}
-             :production [:shared {:dependencies [[mysql/mysql-connector-java "5.1.6"]]
-                                   :ragtime {:database (let [prefix "jdbc:"]
-                                                         (System/getenv "DATABASE_URL"))}}]
+             :production [:shared {:dependencies [[mysql/mysql-connector-java "5.1.6"]]}]
              :dev [:shared {:dependencies [[mysql/mysql-connector-java "5.1.6"]]
-                            :env {:database-url "mysql://127.0.0.1/tutorial_dev?user=root"}
-                            :ragtime {:database "jdbc:mysql://127.0.0.1/tutorial_dev?user=root"}}]
+                            :env {:database-url "mysql://127.0.0.1/tutorial_dev?user=root"}}]
              :test [:shared {:dependencies [[ring-mock "0.1.5"]
                                             [org.clojure/data.json "0.2.5"]
                                             [com.h2database/h2 "1.3.170"]]
-                             :env {:database-url "h2:mem:tutorial_test;DB_CLOSE_DELAY=-1"}
-                             :ragtime {:database "h2:mem:tutorial_test;DB_CLOSE_DELAY=-1"}}]}
+                             :env {:database-url "h2:mem:tutorial_test;DB_CLOSE_DELAY=-1"}}]}
 
   :ring {:handler tutorial.handler/app}
 
