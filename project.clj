@@ -23,7 +23,7 @@
              :production [:shared {:dependencies [[mysql/mysql-connector-java "5.1.6"]]}]
              :dev [:shared {:dependencies [[mysql/mysql-connector-java "5.1.6"]]
                             :env {:database-url "mysql://127.0.0.1/tutorial_dev?user=root"}
-                            :ragtime {:database "mysql://127.0.0.1/tutorial_dev?user=root"}}]
+                            :ragtime {:database "jdbc:mysql://127.0.0.1/tutorial_dev?user=root"}}]
              :test [:shared {:dependencies [[ring-mock "0.1.5"]
                                             [org.clojure/data.json "0.2.5"]
                                             [com.h2database/h2 "1.3.170"]]
