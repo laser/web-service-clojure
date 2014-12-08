@@ -1,4 +1,4 @@
-(ns tutorial.db
+(ns tutorial.data
   (:require [yesql.core :refer [defqueries]]
             [environ.core :refer [env]]))
 
