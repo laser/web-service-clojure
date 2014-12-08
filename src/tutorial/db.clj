@@ -2,8 +2,7 @@
   (:require [yesql.core :refer [defquery]]
             [environ.core :refer [env]]))
 
-(def db-spec
-  {:connection-uri (str "jdbc:" (env :database-url))})
+(def db-spec (env :database-url))
 
 (defquery create-todo2<! "sql/create-todo.sql")
 (defquery read-todos2 "sql/read-todos.sql")
