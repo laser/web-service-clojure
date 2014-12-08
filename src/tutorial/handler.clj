@@ -5,25 +5,25 @@
             [ragtime.sql.files :refer [migrations]]
             [ring.adapter.jetty :as jetty]
             [ring.middleware.json :refer [wrap-json-response wrap-json-body]]
-            [tutorial.db :as db]
+            [tutorial.service :as svc]
             [tutorial.http :as http])
   (:gen-class))
 
 (cc/defroutes app-routes
-  (cc/GET "/todos" [] (http/ok (db/read-todos)))
-  (cc/GET "/todos/:id" [id] (http/ok (db/read-todo id)))
+  (cc/GET "/todos" [] (http/ok (svc/read-todos)))
+  (cc/GET "/todos/:id" [id] (http/ok (svc/read-todo-by-id id)))
   (cc/POST "/todos" [:as req]
            (let [b #(get-in req [:body %])
-                 results (db/create-todo (b :text) (b :completed))]
+                 results (svc/create-todo (b :text) (b :completed))]
              (->> results
                   :id
                   (http/url-for req)
                   (http/created results))))
   (cc/DELETE "/todos/:id" [id]
-             (db/delete-todo id)
+             (svc/delete-todo-by-id id)
              (http/no-content))
   (cc/PATCH "/todos/:id" {body :body params :params}
-            (http/ok (db/update-todo (:id params) (:text body) (:completed body))))
+            (http/ok (svc/update-todo-by-id (:id params) (:text body) (:completed body))))
   (cc/ANY "*" []
           (http/not-found)))
 
