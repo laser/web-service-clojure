@@ -20,7 +20,9 @@
 
   :profiles {
              :shared {:ragtime {:migrations ragtime.sql.files/migrations}}
-             :production [:shared {:dependencies [[mysql/mysql-connector-java "5.1.6"]]}]
+             :production [:shared {:dependencies [[mysql/mysql-connector-java "5.1.6"]]
+                                   :ragtime {:database (let [prefix "jdbc:"]
+                                                         (System/getenv "DATABASE_URL"))}}]
              :dev [:shared {:dependencies [[mysql/mysql-connector-java "5.1.6"]]
                             :env {:database-url "mysql://127.0.0.1/tutorial_dev?user=root"}
                             :ragtime {:database "jdbc:mysql://127.0.0.1/tutorial_dev?user=root"}}]
