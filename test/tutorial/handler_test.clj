@@ -40,26 +40,26 @@
   (update-in resp [:body] #(if % (read-str %) nil)))
 
 (deftest handler-lifecycle
-  ;;; missing route
+  ;; missing route
   (is (= (responsify 404)
          (parse-resp (api-get "/doc/10"))))
 
-  ;;; create a todo
+  ;; create a todo
   (let [user-data {"text" "foo" "completed" false }]
     (is (= (responsify 201 (assoc user-data "id" 1) {"Location" "http://localhost:80/todos/1"})
            (parse-resp (api-post "/todos" user-data)))))
 
-  ;;; update a todo
+  ;; update a todo
   (let [user-data {"text" "bar" "completed" true "id" 1}]
     (is (= (responsify 200 user-data)
            (parse-resp (api-patch "/todos/1" user-data)))))
 
-  ;;; read all todos
+  ;; read all todos
   (let [user-data {"text" "bar" "completed" true "id" 1}]
     (is (= (responsify 200 [user-data])
            (parse-resp (api-get "/todos")))))
 
-  ;;; read a single todo
+  ;; read a single todo
   (let [user-data {"text" "bar" "completed" true "id" 1}]
     (is (= (responsify 200 user-data)
            (parse-resp (api-get "/todos/1")))))

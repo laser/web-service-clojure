@@ -1,53 +1,38 @@
 (ns tutorial.db
-  (:require [oj.core :as oj]
-            [oj.modifiers :as db]
+  (:require [yesql.core :refer [defquery]]
             [environ.core :refer [env]]))
 
 (def db-spec
   {:connection-uri (str "jdbc:" (env :database-url))})
 
+(defquery create-todo2<! "sql/create-todo.sql")
+(defquery read-todos2 "sql/read-todos.sql")
+(defquery read-todos-by-id2 "sql/read-todos-by-id.sql")
+(defquery update-todo-by-id2! "sql/update-todo-by-id.sql")
+(defquery delete-todo-by-id2! "sql/delete-todo-by-id.sql")
+
 (defn create-todo
   [text completed]
-  (let [user-data {:text text :completed completed}
-        results (-> (db/query :todos)
-                    (db/insert (update-in user-data [:completed] str))
-                    (oj/exec db-spec))]
-
-    (if (= 1 (count results))
-      {:status :success :result (->> results first vals first (assoc user-data :id))}
-      {:status :failure :message (format "Error: Could not create todo with text %s" text)})))
+  (let [results (create-todo2<! db-spec text completed)]
+    (->> results
+         vals
+         first
+         (assoc {:text text :completed completed} :id))))
 
 (defn read-todo
   [id]
-  (let [results (-> (db/query :todos)
-                    (db/select [:id :text :completed])
-                    (db/where {:id id})
-                    (oj/exec db-spec))]
-
-    (if (= 1 (count results))
-      {:status :success :result (first results)}
-      {:status :failure :message (format "Error: No todo found with id %s" id)})))
+  (first (read-todos-by-id2 db-spec id)))
 
 (defn read-todos
   []
-  {:status :success :result (-> (db/query :todos)
-                                (db/select [:id :text :completed])
-                                (oj/exec db-spec))})
+  (read-todos2 db-spec))
 
 (defn delete-todo
   [id]
-  (if (= 1 (first (oj/exec {:table :todos :delete true :where {:id id}} db-spec)))
-    {:status :success :result nil}
-    {:status :failure :message (format "Error: Could not delete todo with id %s" id)}))
+  (delete-todo-by-id2! db-spec id))
 
 (defn update-todo
   [id text completed]
-  (let [user-data {:id (read-string id) :text text :completed completed}
-        updated (-> (db/query :todos)
-                    (db/where {:id id})
-                    (db/update (update-in user-data [:completed] str))
-                    (oj/exec db-spec))]
-
-    (if (= 1 (first updated))
-      {:status :success :result user-data}
-      {:status :failure :message (format "Error: Could not update todo with id %s" id)})))
+  (let [id (read-string id)]
+    (update-todo-by-id2! db-spec text completed id)
+    {:id id, :text text, :completed completed}))

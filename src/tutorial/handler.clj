@@ -10,37 +10,20 @@
   (:gen-class))
 
 (cc/defroutes app-routes
-  (cc/GET "/todos" []
-          (let [work (db/read-todos)]
-            (case (:status work)
-              :failure (http/internal-error)
-              :success (http/ok (:result work)))))
-  (cc/GET "/todos/:id" [id]
-          (let [work (db/read-todo id)]
-            (case (:status work)
-              :failure (http/not-found)
-              :success (http/ok (:result work)))))
+  (cc/GET "/todos" [] (http/ok (db/read-todos)))
+  (cc/GET "/todos/:id" [id] (http/ok (db/read-todo id)))
   (cc/POST "/todos" [:as req]
            (let [b #(get-in req [:body %])
-                 work (db/create-todo (b :text) (b :completed))]
-             (case (:status work)
-               :failure (http/internal-error)
-               :success (->> work
-                             :result
-                             :id
-                             (http/url-for req)
-                             (http/created (:result work))))))
+                 results (db/create-todo (b :text) (b :completed))]
+             (->> results
+                  :id
+                  (http/url-for req)
+                  (http/created results))))
   (cc/DELETE "/todos/:id" [id]
-             (let [result (db/delete-todo id)]
-               (case (:status result)
-                 :failure (http/not-found)
-                 :success (http/no-content))))
+             (db/delete-todo id)
+             (http/no-content))
   (cc/PATCH "/todos/:id" {body :body params :params}
-            (let [{:keys [text completed]} body
-                  result (db/update-todo (:id params) text completed)]
-              (case (:status result)
-                :failure (http/not-found)
-                :success (->> result :result http/ok))))
+            (http/ok (db/update-todo (:id params) (:text body) (:completed body))))
   (cc/ANY "*" []
           (http/not-found)))
 
