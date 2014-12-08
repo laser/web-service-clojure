@@ -1,44 +1,33 @@
 (ns tutorial.handler
-  (:require [compojure.core :as cc]
-            [environ.core :refer [env]]
-            [ragtime.core :refer [migrate-all connection]]
-            [ragtime.sql.files :refer [migrations]]
-            [ring.adapter.jetty :as jetty]
-            [ring.middleware.json :refer [wrap-json-response wrap-json-body]]
-            [tutorial.service :as svc]
-            [tutorial.http :as http])
-  (:gen-class))
+  (:require [tutorial.service :as service]
+            [tutorial.http :as http]))
 
-(cc/defroutes app-routes
-  (cc/POST "/todos" [:as req]
-           (let [b #(get-in req [:body %])
-                 results (svc/create-todo (b :text) (b :completed))]
-             (->> results
-                  :id
-                  (http/url-for req)
-                  (http/created results))))
-  (cc/GET "/todos" [] (http/ok (svc/read-todos)))
-  (cc/GET "/todos/:id" [id] (http/ok (svc/read-todo-by-id id)))
-  (cc/PATCH "/todos/:id" {body :body params :params}
-            (http/ok (svc/update-todo-by-id (:id params) (:text body) (:completed body))))
-  (cc/DELETE "/todos/:id" [id]
-             (svc/delete-todo-by-id id)
-             (http/no-content))
-  (cc/ANY "*" []
-          (http/not-found)))
+(defn post-todo
+  [req]
+  (let [b #(get-in req [:body %])
+        results (service/create-todo (b :text) (b :completed))]
+    (->> results
+         :id
+         (http/url-for req)
+         (http/created results))))
 
-(def app
-  (-> app-routes
-      (wrap-json-body {:keywords? true})
-      wrap-json-response))
-
-(defn start
-  [port]
-  (jetty/run-jetty app {:port port
-                        :join? false}))
-
-(defn -main
+(defn get-todos
   []
-  (migrate-all (connection (str "jdbc:" (env :database-url))) (migrations))
-  (let [port (Integer. (or (System/getenv "PORT") "3000"))]
-    (start port)))
+  (http/ok (service/read-todos)))
+
+(defn get-todo
+  [id]
+  (http/ok (service/read-todo-by-id id)))
+
+(defn patch-todo
+  [body params]
+  (http/ok (service/update-todo-by-id (:id params) (:text body) (:completed body))))
+
+(defn delete-todo
+  [id]
+  (service/delete-todo-by-id id)
+  (http/no-content))
+
+(defn not-found
+  []
+  (http/not-found))

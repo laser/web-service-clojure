@@ -1,6 +1,6 @@
 (ns tutorial.handler_test
   (:require [clojure.test :refer :all]
-            [tutorial.handler :refer :all]
+            [tutorial.main :refer [app]]
             [ring.mock.request :refer [request content-type]]
             [clojure.data.json :refer [write-str read-str]]
             [environ.core :refer [env]]
