@@ -10,8 +10,6 @@
   (:gen-class))
 
 (cc/defroutes app-routes
-  (cc/GET "/todos" [] (http/ok (svc/read-todos)))
-  (cc/GET "/todos/:id" [id] (http/ok (svc/read-todo-by-id id)))
   (cc/POST "/todos" [:as req]
            (let [b #(get-in req [:body %])
                  results (svc/create-todo (b :text) (b :completed))]
@@ -19,11 +17,13 @@
                   :id
                   (http/url-for req)
                   (http/created results))))
+  (cc/GET "/todos" [] (http/ok (svc/read-todos)))
+  (cc/GET "/todos/:id" [id] (http/ok (svc/read-todo-by-id id)))
+  (cc/PATCH "/todos/:id" {body :body params :params}
+            (http/ok (svc/update-todo-by-id (:id params) (:text body) (:completed body))))
   (cc/DELETE "/todos/:id" [id]
              (svc/delete-todo-by-id id)
              (http/no-content))
-  (cc/PATCH "/todos/:id" {body :body params :params}
-            (http/ok (svc/update-todo-by-id (:id params) (:text body) (:completed body))))
   (cc/ANY "*" []
           (http/not-found)))
 
