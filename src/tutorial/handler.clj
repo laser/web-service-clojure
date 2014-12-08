@@ -21,7 +21,7 @@
 
 (defn patch-todo
   [body params]
-  (http/ok (service/update-todo-by-id (:id params) (:text body) (:completed body))))
+  (http/ok (service/update-todo-by-id (read-string (:id params)) (:text body) (:completed body))))
 
 (defn delete-todo
   [id]

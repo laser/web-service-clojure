@@ -1,7 +1,7 @@
 (defproject tutorial "0.1.0-SNAPSHOT"
   :dependencies [[compojure "1.2.2"]
                  [environ "1.0.0"]
-                 [yesql "0.5.0-beta2"]
+                 [oj "0.2.4" :exclusions [commons-codec]]
                  [org.clojure/clojure "1.6.0"]
                  [ragtime/ragtime.sql.files "0.3.8"]
                  [ring/ring-defaults "0.1.2"]
