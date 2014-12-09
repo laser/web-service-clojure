@@ -53,3 +53,22 @@ Project structure:
 3. HTTP request-handlers: [`handler.clj`](https://github.com/laser/web-service-clojure/blob/master/src/tutorial/handler.clj)
 4. An interface wrapping JDBC, for database connectivity: [`data.clj`](https://github.com/laser/web-service-clojure/blob/master/src/tutorial/data.clj)
 5. HTTP response-forming functions: [`http.clj`](https://github.com/laser/web-service-clojure/blob/master/src/tutorial/http.clj)
+
+
+### Making Requests to the API
+
+Create a todo:
+> curl -v -H "Content-Type: application/json" -d '{"text":"Call Mom","completed":false}' http://localhost:3000/todos
+
+Get a todo, by id:
+> curl -v "Content-Type: application/json" http://localhost:3000/todos/1
+
+Get all todos:
+> curl -v "Content-Type: application/json" http://localhost:3000/todos
+
+Update a todo:
+> curl -v -X PATCH -H "Content-Type: application/json" -d '{"text":"Call Mom","completed":true}' http://localhost:3000/todos
+
+Delete a todo, by id:
+> curl -v -X DELETE -H "Content-Type: application/json" http://localhost:3000/todos/1
+
