@@ -1,11 +1,13 @@
 (ns tutorial.handler
-  (:require [tutorial.service :as service]
+  (:require [tutorial.data :as data]
             [tutorial.http :as http]))
 
 (defn post-todo
-  [req]
-  (let [b #(get-in req [:body %])
-        results (service/create-todo (b :text) (b :completed))]
+  [{{text :text completed :completed} :body :as req}]
+  (let [results (->> (data/create-todo<! (get-in req [:body :text]) (get-in req [:body :completed]))
+                     vals
+                     first
+                     (assoc {:text text, :completed completed} :id))]
     (->> results
          :id
          (http/url-for req)
@@ -13,19 +15,21 @@
 
 (defn get-todos
   []
-  (http/ok (service/read-todos)))
+  (http/ok (data/read-todos)))
 
 (defn get-todo
   [id]
-  (http/ok (service/read-todo-by-id id)))
+  (http/ok (first (data/read-todos-by-id id))))
 
 (defn patch-todo
-  [body params]
-  (http/ok (service/update-todo-by-id (read-string (:id params)) (:text body) (:completed body))))
+  [{text :text completed :completed} {id :id}]
+  (let [id (read-string id)]
+    (http/ok (do (data/update-todo-by-id! id text completed)
+                 {:id id, :text text, :completed completed}))))
 
 (defn delete-todo
   [id]
-  (service/delete-todo-by-id id)
+  (data/delete-todo-by-id! id)
   (http/no-content))
 
 (defn not-found
