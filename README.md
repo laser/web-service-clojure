@@ -52,3 +52,4 @@ Project structure:
 2. Compojure API route-definitions: [`router.clj`](https://github.com/laser/web-service-clojure/blob/master/src/tutorial/router.clj)
 3. HTTP request-handlers: [`handler.clj`](https://github.com/laser/web-service-clojure/blob/master/src/tutorial/handler.clj)
 4. An interface wrapping JDBC, for database connectivity: [`data.clj`](https://github.com/laser/web-service-clojure/blob/master/src/tutorial/data.clj)
+5. HTTP response-forming functions: [`http.clj`](https://github.com/laser/web-service-clojure/blob/master/src/tutorial/http.clj)
