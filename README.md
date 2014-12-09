@@ -15,7 +15,7 @@ Todo {
 1. Install [Leiningen](http://leiningen.org/)
 2. Install Java
 3. Install MySQL
-4. Create a MySQL database named `tutorial_dev`
+4. Create a MySQL database named `tutorial_dev` and ensure you have a user `root` with an empty password. (If you don't, you'll need to update the JDBC connection strings in `project.clj`)
 5. Run the migrations: `lein ragtime migrate`
 5. Run the following command to start the application: `lein ring server-headless 3000`
 6. Verify the application is running by running the following command: `curl -v http://localhost:3000/todos`
