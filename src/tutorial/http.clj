@@ -10,11 +10,11 @@
 
 (defn created
   "HTTP 201 Created"
-  ([body url]
+  ([body location]
    (->
      (response body)
      (status 201)
-     (header "Location" url))))
+     (header "Location" location))))
 
 (defn no-content
   "HTTP 204 No Content"
