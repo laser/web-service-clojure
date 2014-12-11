@@ -1,1 +1,1 @@
-script: bin/lein test
+language: clojure
